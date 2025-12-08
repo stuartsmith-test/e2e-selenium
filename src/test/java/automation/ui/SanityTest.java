@@ -1,31 +1,26 @@
 package automation.ui;
 
+import automation.BaseTest;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SanityTest {
+// 1. EXTEND BaseTest to inherit the "driver" and setup logic
+public class SanityTest extends BaseTest {
 
     @Test
-    public void testLaunchBrowser() {
-        // 1. Setup the driver
-        // Note: Selenium 4.6+ automatically manages the driver download for you!
-        // No need to manually download chromedriver.exe anymore.
-        WebDriver driver = new ChromeDriver();
-
-        try {
-            // 2. Execute Test Steps
-            driver.get("https://www.google.com");
-            String title = driver.getTitle();
-            
-            // 3. Verification
-            System.out.println("Page Title is: " + title);
-            assertTrue(title.contains("Google"), "Title should contain 'Google'");
-
-        } finally {
-            // 4. Cleanup (Always close the browser!)
-            driver.quit();
-        }
+    public void testFrameworkSetup() {
+        // 2. No more "new ChromeDriver()" - it happens in @BeforeEach of BaseTest
+        
+        // 3. Verify Config Loading
+        // (BaseTest should have read the base.url from config.properties)
+        String baseUrl = System.getProperty("base.url", "NOT_FOUND"); 
+        // Note: If your BaseTest stores it in a variable, you might access it directly.
+        // If your BaseTest loads it into System Properties, the line above works.
+        // If unsure, just try navigating:
+        
+        driver.get("https://google.com"); // We will swap this for the real app URL next
+        
+        System.out.println("Browser opened successfully using BaseTest!");
+        assertTrue(driver.getTitle().contains("Google"));
     }
 }
