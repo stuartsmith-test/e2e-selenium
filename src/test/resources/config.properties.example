@@ -1,0 +1,10 @@
+# config.properties.example
+# Rename this file to 'config.properties' and update the values below
+
+# The URL of the application under test
+base.url=http://localhost:3000
+
+# ABSOLUTE path to the shop.db file on your local machine
+# Windows Example: C:/Users/YourName/projects/app-under-test/shop.db
+# Mac/Linux Example: /Users/YourName/projects/app-under-test/shop.db
+db.path=/path/to/your/shop.db
