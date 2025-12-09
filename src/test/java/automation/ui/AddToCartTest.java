@@ -5,6 +5,7 @@ import automation.pages.CartPage;
 import automation.pages.CheckoutPage;
 import automation.pages.HomePage;
 import automation.utils.ApiUtils;
+import automation.utils.DbUtils;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -144,7 +145,7 @@ public class AddToCartTest extends BaseTest {
      * on the cart and checkout pages.
      */
     @Test
-    public void testE2EAddToCartAndCheckout() {
+    public void testE2EAddToCartAndCheckout() throws Exception {
         // Arrange: Reset cart to clean state
         ApiUtils.resetCart(baseUrl);
         
@@ -177,6 +178,11 @@ public class AddToCartTest extends BaseTest {
         // Now 'productName' is safely populated (e.g., "Koala")
         cartPage.assertProductInCart(productName);
         cartPage.assertProductQuantity(productName, 1);
+
+        // DATABASE VALIDATION
+        // Verify the backend (SQLite) actually recorded the item
+        int dbQuantity = DbUtils.getCartQuantity(dbPath, 1);
+        assertEquals(1, dbQuantity, "Database should show 1 item in cart");
 
         // Act: Proceed to checkout
         CheckoutPage checkoutPage = cartPage.clickCheckout();
