@@ -51,9 +51,13 @@ public abstract class BaseTest {
         // Configure Chrome options (headless mode for CI, headed for local debugging)
         ChromeOptions options = new ChromeOptions();
         
-        // Uncomment for headless mode (recommended for CI):
-        // options.addArguments("--headless");
-        // options.addArguments("--disable-gpu");
+        // Check if running in CI (via Maven flag or GitHub Actions environment)
+        String headlessProp = System.getProperty("headless");
+        String ciEnv = System.getenv("CI");
+
+        if ("true".equalsIgnoreCase(headlessProp) || ciEnv != null) {
+            options.addArguments("--headless");
+        }
         
         // Additional options for stability
         options.addArguments("--no-sandbox");
