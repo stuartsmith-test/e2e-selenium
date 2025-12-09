@@ -1,0 +1,75 @@
+name: Java Selenium Tests
+
+on:
+  workflow_dispatch: {}     # Allow manual runs from Actions tab
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      APP_REPO: https://github.com/stuartsmith-test/test-automation-foundations-728391.git
+      APP_DIR: app-under-test
+      PORT: 3000
+      
+    steps:
+      - name: Checkout Java Repo
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # --- APP SETUP ---
+      
+      - name: Clone Sample App
+        run: git clone "$APP_REPO" "$APP_DIR"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ env.APP_DIR }}/package-lock.json
+
+      - name: Install and Start App
+        working-directory: ${{ env.APP_DIR }}
+        run: |
+          npm ci
+          # Start in background
+          nohup npm start >/dev/null 2>&1 &
+          echo $! > ../server.pid
+
+      - name: Wait for App to be Ready
+        run: |
+          echo "Waiting for app on port ${{ env.PORT }}..."
+          for i in {1..60}; do
+            if curl -sSf "http://localhost:${{ env.PORT }}/" >/dev/null; then
+              echo "✅ App is up!"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "❌ App did not start in time" >&2
+          exit 1
+
+      # --- TEST EXECUTION ---
+
+      - name: Run Selenium Tests
+        # -Dheadless=true tells BaseTest to not look for a screen
+        run: mvn test -Dheadless=true
+        
+      - name: Stop App
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill "$(cat server.pid)" || true
+          fi
