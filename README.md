@@ -7,7 +7,7 @@ This repository is a personal initiative to explore **Java-based test automation
 
 It serves as an architectural port of my [Playwright/Python Framework](https://github.com/stuartsmith-test/e2e-playwright). The goal of this project was to take a functioning automation suite and replicate its core capabilities—API state seeding, Page Object Model, and database checks—using the **Selenium/Java** ecosystem.
 
-For details on the AI-assisted development process used to create this framework, please refer to the [original project's README](https://github.com/stuartsmith-test/e2e-playwright#ai-assisted-qa).
+For details on the AI-assisted development process used to create this framework, please refer to the [original project's README](https://github.com/stuartsmith-test/e2e-playwright).
 
 ### Technical Scope
 * **Hybrid Framework:** Combines **Selenium WebDriver** (UI interactions) with **Rest Assured** (API-based test data setup).
@@ -19,21 +19,19 @@ For details on the AI-assisted development process used to create this framework
 
 ## Prerequisites
 
-Before running these tests, ensure you have the necessary tools installed.
+Before running these tests, ensure you have the necessary runtime environment.
 
 ### 1. Java Development Kit (JDK) 21
 This project requires Java 21.
 * **Check version:** `java -version`
 * **Install:** [Download JDK 21](https://www.oracle.com/java/technologies/downloads/#java21) or use a package manager (e.g., `brew install openjdk@21`).
 
-### 2. Maven
-* **Check version:** `mvn -version`
-* **Install:** [Download Maven](https://maven.apache.org/download.cgi).
-
-### 3. Node.js (for the App Under Test)
+### 2. Node.js (for the App Under Test)
 The test application is a Node.js web app. You need Node to run it locally.
 * **Recommended:** Node v16 or higher.
 * **Check version:** `node -v`
+
+*(Note: You do not need to install Maven manually. This project includes a Maven Wrapper).*
 
 ---
 
@@ -44,6 +42,7 @@ The test application is a Node.js web app. You need Node to run it locally.
 git clone https://github.com/stuartsmith-test/e2e-selenium.git
 cd e2e-selenium
 ```
+
 ### 2. Prepare the App Under Test
 The tests run against the [Test Automation Foundations](https://github.com/stuartsmith-test/test-automation-foundations-728391) app (forked from LinkedIn Learning).
 
@@ -54,6 +53,7 @@ git clone https://github.com/stuartsmith-test/test-automation-foundations-728391
 cd app-under-test
 npm ci  # Clean install of dependencies
 ```
+
 **Start the App:**
 ```bash
 npm start
@@ -89,23 +89,71 @@ db.path=/Users/YourUser/dev/app-under-test/shop.db
 
 ## Running Tests
 
+This project uses the **Maven Wrapper** (`mvnw`), which automatically handles the Maven version for you.
+
 ### Execute All Tests
-Run the entire suite using Maven:
+
+**Mac / Linux / Git Bash:**
 ```bash
-mvn test
+./mvnw test
+```
+
+**Windows (Command Prompt / PowerShell):**
+```powershell
+.\mvnw.cmd test
 ```
 
 ### Run Specific Tests
-To run only the End-to-End cart scenario:
+To run only the End-to-End cart scenario (single test method):
+
+**Mac / Linux / Git Bash:**
 ```bash
-mvn -Dtest=AddToCartTest test
+./mvnw -Dtest="AddToCartTest#testE2EAddToCartAndCheckout" test
 ```
 
-### Debugging
-The tests run in **Headed Mode** (browser visible) by default when running locally.
-To run in **Headless Mode** (no browser UI):
+**Windows (Command Prompt / PowerShell):**
+```powershell
+.\mvnw.cmd -Dtest="AddToCartTest#testE2EAddToCartAndCheckout" test
+```
+
+### Debugging (Headless Mode)
+To run tests without the visible browser window (Headless):
+
+**Mac / Linux / Git Bash:**
 ```bash
-mvn test -Dheadless=true
+./mvnw test -Dheadless=true
+```
+
+**Windows:**
+```powershell
+.\mvnw.cmd test -Dheadless=true
+```
+
+---
+
+## ☁️ Running in GitHub Codespaces (or Headless Linux)
+
+If you are running this in a cloud environment like GitHub Codespaces, you may need to perform two extra setup steps because Selenium (unlike Playwright) does not bundle its own browser.
+
+### 1. Install Java 21
+Codespaces may default to Java 11 or 17. Verify with `java -version`.
+If needed, install Java 21 using SDKMAN (pre-installed in Codespaces):
+```bash
+sdk install java 21.0.2-tem
+```
+
+### 2. Install Google Chrome
+Selenium requires the actual browser binary to be present on the system.
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt-get update
+sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+```
+
+### 3. Run in Headless Mode
+Since there is no monitor, you must tell Maven to run without a UI:
+```bash
+./mvnw test -Dheadless=true
 ```
 
 ---
