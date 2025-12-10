@@ -5,9 +5,7 @@
 ## Overview
 This repository is a personal initiative to explore **Java-based test automation patterns**.
 
-It serves as an architectural port of my [Playwright/Python Framework](https://github.com/stuartsmith-test/e2e-playwright). The goal of this project was to take a functioning automation suite and replicate its core capabilities—API state seeding, Page Object Model, and database checks—using the **Selenium/Java** ecosystem.
-
-For details on the AI-assisted development process used to create this framework, please refer to the [original project's README](https://github.com/stuartsmith-test/e2e-playwright).
+The project was generated using an AI-First workflow (Copilot/Claude) to demonstrate the rapid porting of a [Python/Playwright architecture](https://github.com/stuartsmith-test/e2e-playwright) into a Java/Selenium environment. It showcases how domain-aware AI agents can accelerate framework setup and test generation.
 
 ### Technical Scope
 * **Hybrid Framework:** Combines **Selenium WebDriver** (UI interactions) with **Rest Assured** (API-based test data setup).
