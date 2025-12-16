@@ -30,3 +30,5 @@ test-output/
 
 # Configuration
 src/test/resources/config.properties
+
+app-under-test/
